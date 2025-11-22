@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BLACKPINK - OFFICIAL FAN PAGE V27</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --bp-black: #050505;
+            --bp-pink: #ff80ab;
+            --bp-neon: #e0b0ff;
+            --text-white: #ffffff;
+            --card-bg: rgba(18, 18, 18, 0.85); /* 半透明卡片 */
+            --gold: #ffd700;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+        
+        body { 
+            background-color: var(--bp-black); 
+            color: var(--text-white); 
+            overflow-x: hidden; 
+            width: 100%;
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column;
+        }
+
+        /* =========================================
+           VIDEO BACKGROUND
+           ========================================= */
+        #bg-video-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -5;
+            overflow: hidden;
+        }
+
+        #bg-video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: cover;
+        }
+
+        #video-overlay-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(3px);
+            z-index: 0;
+        }
+
+        /* =========================================
+           INTRO ANIMATION
+           ========================================= */
+        #intro-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #000; z-index: 9999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: opacity 0.8s ease, visibility 0.8s;
+        }
+
+        body.loaded #intro-overlay {
+            opacity: 0; visibility: hidden; pointer-events: none;
+        }
+
+        .glitch-container {
+            position: relative; 
+            width: 85vw; height: 70vh; max-width: 1600px;
+            margin-bottom: 40px;
+        }
+        .glitch-img {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: url('intro.jpg') no-repeat center center;
+            background-size: contain;
+            opacity: 0.9;
+        }
+
+        .glitch-img:nth-child(2) {
+            background-color: transparent;
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+            animation: glitch-anim-1 2s infinite linear alternate-reverse;
+            opacity: 0.5; filter: drop-shadow(-2px 0 #ff00c1);
+        }
+        .glitch-img:nth-child(3) {
+            background-color: transparent;
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+            animation: glitch-anim-2 3s infinite linear alternate-reverse;
+            opacity: 0.5; filter: drop-shadow(2px 0 #00fff9);
+        }
+
+        .scanline {
+            width: 100%; height: 100px; z-index: 10;
+            background: linear-gradient(0deg, rgba(0,0,0,0) 0%, rgba(255, 128, 171, 0.2) 50%, rgba(0,0,0,0) 100%);
+            opacity: 0.1; position: absolute; bottom: 100%;
+            animation: scanline 4s linear infinite; pointer-events: none;
+        }
+
+        .loader-text {
+            font-family: 'Courier New', monospace; color: var(--bp-pink); font-size: 1.5rem; letter-spacing: 5px;
+            text-shadow: 0 0 15px var(--bp-pink); margin-bottom: 15px; font-weight: bold;
+        }
+        .progress-bar {
+            width: 50%; height: 6px; background: #222; position: relative; border-radius: 3px; overflow: hidden;
+        }
+        .progress-fill {
+            width: 0%; height: 100%; background: var(--bp-pink);
+            box-shadow: 0 0 20px var(--bp-pink); transition: width 0.1s;
+        }
+        .terminal-logs {
+            font-family: 'Courier New', monospace; color: #777; font-size: 1rem; margin-top: 20px; height: 60px; text-align: center;
+        }
+
+        @keyframes scanline { 0% { bottom: 100%; } 100% { bottom: -100%; } }
+        @keyframes glitch-anim-1 {
+            0% { clip-path: inset(20% 0 80% 0); transform: translate(-2px, 1px); }
+            20% { clip-path: inset(60% 0 10% 0); transform: translate(2px, -1px); }
+            40% { clip-path: inset(40% 0 50% 0); transform: translate(-2px, 2px); }
+            60% { clip-path: inset(80% 0 5% 0); transform: translate(2px, -2px); }
+            80% { clip-path: inset(10% 0 70% 0); transform: translate(-1px, 1px); }
+            100% { clip-path: inset(30% 0 50% 0); transform: translate(1px, -1px); }
+        }
+        @keyframes glitch-anim-2 {
+            0% { clip-path: inset(10% 0 60% 0); transform: translate(2px, -1px); }
+            20% { clip-path: inset(80% 0 5% 0); transform: translate(-2px, 1px); }
+            40% { clip-path: inset(30% 0 20% 0); transform: translate(2px, 2px); }
+            60% { clip-path: inset(10% 0 80% 0); transform: translate(-2px, -2px); }
+            80% { clip-path: inset(50% 0 30% 0); transform: translate(1px, 1px); }
+            100% { clip-path: inset(70% 0 10% 0); transform: translate(-1px, -1px); }
+        }
+
+        /* --- 頁面淡入 --- */
+        nav, .main-content { opacity: 0; transition: opacity 1s ease; }
+        body.loaded nav, body.loaded .main-content { opacity: 1; }
+
+        /* --- 導覽列 --- */
+        nav {
+            position: fixed; top: 0; width: 100%; background: rgba(5, 5, 5, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 0 20px; z-index: 1000; border-bottom: 1px solid rgba(255, 128, 171, 0.5);
+            height: 70px; display: flex; justify-content: center; align-items: center;
+        }
+        .nav-links { display: flex; gap: 40px; }
+        .nav-btn {
+            background: none; border: none; color: #ccc; font-size: 1.1rem; font-weight: bold;
+            text-transform: uppercase; cursor: pointer; padding: 10px 0; position: relative; transition: 0.3s;
+        }
+        .nav-btn:hover, .nav-btn.active { color: var(--bp-pink); text-shadow: 0 0 10px var(--bp-pink); }
+        .nav-btn.active::after {
+            content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 3px;
+            background: var(--bp-pink); box-shadow: 0 0 10px var(--bp-pink);
+        }
+
+        /* --- 頁面容器 --- */
+        .main-content { margin-top: 70px; flex: 1; }
+        .page { display: none; animation: fadeIn 0.5s ease; padding: 40px 20px; max-width: 1800px; margin: 0 auto; }
+        .page.active-page { display: block; }
+
+        /* --- HOME --- */
+        #home-page {
+            max-width: 100%; padding: 0; min-height: calc(100vh - 70px);
+            display: flex; flex-direction: column; align-items: center;
+            background: transparent; 
+            text-align: center;
+        }
+        
+        .hero-section { padding: 100px 20px 50px; }
+        .main-title { font-size: 6rem; letter-spacing: 5px; font-weight: 900; text-shadow: 0 0 30px rgba(0,0,0,0.8); line-height: 1.1; margin-bottom: 20px;}
+        .main-title span { color: var(--bp-pink); text-shadow: 0 0 20px var(--bp-pink); }
+        
+        .home-socials { display: flex; gap: 25px; margin-bottom: 40px; justify-content: center; }
+        .home-social-btn { color: #fff; font-size: 2rem; transition: 0.3s; display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .home-social-btn:hover { color: var(--bp-pink); transform: scale(1.1); text-shadow: 0 0 10px var(--bp-pink); }
+
+        /* Tables (Awards & Filmography) */
+        .awards-section { width: 100%; max-width: 1000px; background: rgba(0, 0, 0, 0.6); border-radius: 15px; padding: 30px; margin-bottom: 50px; border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(5px); }
+        .section-header { font-size: 2rem; color: var(--gold); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px; border-bottom: 2px solid var(--gold); display: inline-block; padding-bottom: 5px;}
+        
+        .awards-table { width: 100%; border-collapse: collapse; text-align: left; }
+        .awards-table th { padding: 15px; color: #aaa; font-size: 0.9rem; border-bottom: 1px solid #444; }
+        .awards-table td { padding: 15px; border-bottom: 1px solid #333; font-size: 0.95rem; }
+        .awards-table tr:hover { background: rgba(255,255,255,0.1); }
+        .award-year { color: var(--bp-pink); font-weight: bold; width: 80px; }
+        .award-name { font-weight: bold; color: #fff; }
+        .award-cat { color: #ccc; font-style: italic; }
+        .award-work { color: var(--gold); text-align: right; font-weight: bold;}
+
+        .era-container { display: flex; gap: 30px; flex-wrap: wrap; justify-content: center; padding-bottom: 50px;}
+        .era-box { 
+            border: 2px solid white; padding: 15px 30px; backdrop-filter: blur(5px); transition: 0.3s; cursor: pointer; width: 250px;
+            background: rgba(0,0,0,0.3);
+        }
+        .era-box:hover { background: rgba(255,128,171,0.2); transform: scale(1.05); border-color: var(--bp-pink); }
+        .era-box h3 { font-size: 1.2rem; letter-spacing: 2px; margin-bottom: 5px; }
+        .iya-style { border-color: #fff; color: #fff; }
+        .born-pink-style { border-color: var(--bp-pink); color: var(--bp-pink); }
+        .deadline-style { border-color: #d8bfd8; color: #d8bfd8; text-shadow: 0 0 5px rgba(216, 191, 216, 0.5); }
+
+        /* --- HISTORY --- */
+        .history-table-container {
+            max-width: 800px; margin: 0 auto; background: var(--card-bg); 
+            border-radius: 10px; overflow: hidden; box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            backdrop-filter: blur(10px);
+        }
+        .history-table { width: 100%; border-collapse: collapse; }
+        .history-table th { background: rgba(255, 128, 171, 0.8); color: #000; padding: 15px 20px; text-align: left; position: sticky; top: 0;}
+        .history-table td { padding: 12px 20px; border-bottom: 1px solid #333; color: #ddd; font-size: 1rem; }
+        .history-table tr:hover { background: rgba(255,255,255,0.05); color: var(--bp-pink); }
+        .date-col { color: var(--bp-pink) !important; font-family: monospace; width: 140px; font-weight: bold; }
+        .song-title-col { font-weight: 500; }
+        .song-note { font-size: 0.8rem; color: #888; margin-left: 10px; font-style: italic; border: 1px solid #444; padding: 1px 5px; border-radius: 4px; display: inline-block;}
+
+        /* --- MEMBERS --- */
+        .members-grid { 
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 20px; 
+            align-items: start;
+        }
+        
+        .member-card { background: var(--card-bg); border-radius: 15px; overflow: hidden; text-align: center; border: 1px solid #333; display: flex; flex-direction: column; backdrop-filter: blur(5px);}
+        .member-img { width: 100%; height: 350px; object-fit: cover; object-position: top; }
+        .member-info { padding: 20px; text-align: left; flex: 1; display: flex; flex-direction: column; }
+        
+        .member-stage-name { font-size: 1.8rem; color: var(--bp-pink); font-weight: bold; text-align: center; margin-bottom: 10px; letter-spacing: 2px;}
+        
+        .info-row { margin-bottom: 8px; font-size: 0.9rem; border-bottom: 1px solid #222; padding-bottom: 5px; display: flex; justify-content: space-between;}
+        .info-label { color: #888; font-weight: bold; width: 60px; flex-shrink: 0;}
+        .info-value { color: #ddd; text-align: right; line-height: 1.3; font-size: 0.9rem;}
+
+        .member-socials { display: flex; gap: 15px; padding: 10px 0; margin-bottom: 5px; justify-content: center;}
+        .mem-social-btn { color: #888; font-size: 1.2rem; transition: 0.3s; }
+        .mem-social-btn:hover { color: var(--bp-pink); }
+
+        /* Awards in Member Card */
+        .mem-awards-container {
+            margin: 15px 0; padding: 10px; background: rgba(0,0,0,0.5); border-radius: 8px; border-left: 3px solid var(--gold);
+        }
+        .mem-awards-header { font-size: 0.85rem; color: var(--gold); font-weight: bold; margin-bottom: 5px; text-transform: uppercase;}
+        .mem-award-item { font-size: 0.8rem; color: #ccc; margin-bottom: 4px; display: flex; justify-content: space-between;}
+        .mem-award-year { color: #666; margin-right: 5px; font-family: monospace;}
+
+        .solo-container { margin-top: 10px; flex-grow: 1; border-top: 1px solid #333; padding-top: 10px;}
+        .solo-header { font-size: 0.9rem; color: var(--bp-pink); margin-bottom: 5px; font-weight: bold; letter-spacing: 1px; margin-top: 10px; border-bottom: 1px solid #333; padding-bottom: 5px; }
+        .solo-item { display: flex; flex-direction: column; font-size: 0.85rem; padding: 6px 0; border-bottom: 1px dashed #333; color: #ccc; }
+        .solo-item:last-child { border-bottom: none; }
+        .solo-meta { display: flex; justify-content: space-between; align-items: center; }
+        .solo-date { font-family: monospace; color: #777; font-size: 0.8rem; }
+        .solo-song { text-align: right; font-weight: bold; color: #fff; }
+        .solo-note { text-align: right; color: #888; font-size: 0.75rem; font-style: italic; margin-top: 2px;}
+        .collab-note { color: var(--bp-neon); font-size: 0.75rem; text-align: right; font-weight: bold;}
+
+        /* --- TOURS (3 Columns) --- */
+        .tours-container {
+            display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; height: calc(100vh - 180px);
+        }
+        .tour-column {
+            background: var(--card-bg); border-radius: 15px; overflow: hidden; display: flex; flex-direction: column;
+            border: 1px solid #333; backdrop-filter: blur(5px);
+        }
+        .tour-header { padding: 20px; text-align: center; border-bottom: 1px solid #333; flex-shrink: 0;}
+        
+        .iya-col { border-top: 4px solid #fff; }
+        .iya-col h2 { color: #fff; font-size: 1.5rem; }
+        
+        .bp-col { border-top: 4px solid var(--bp-pink); }
+        .bp-col h2 { color: var(--bp-pink); font-family: serif; letter-spacing: 2px; font-size: 1.5rem;}
+        
+        .dl-col { border-top: 4px solid #d8bfd8; background: rgba(20, 10, 20, 0.8); }
+        .dl-col h2 { color: #d8bfd8; font-family: 'Times New Roman', serif; letter-spacing: 5px; text-shadow: 0 0 10px rgba(216, 191, 216, 0.3); font-size: 1.5rem; text-transform: uppercase;}
+
+        .tour-scroll-area { flex: 1; overflow-y: auto; padding-bottom: 20px;}
+        .tour-scroll-area::-webkit-scrollbar { width: 6px; }
+        .tour-scroll-area::-webkit-scrollbar-track { background: #111; }
+        .tour-scroll-area::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
+
+        .tour-table { width: 100%; border-collapse: collapse; }
+        .tour-table th { position: sticky; top: 0; background: #1a1a1a; padding: 10px 15px; text-align: left; color: #aaa; font-size: 0.8rem; z-index: 2; text-transform: uppercase;}
+        .tour-table td { padding: 12px 15px; border-bottom: 1px solid #222; font-size: 0.85rem; vertical-align: top;}
+        .tour-table tr:hover { background: rgba(255,255,255,0.05); }
+        .tour-date { font-family: 'Courier New', monospace; color: #fff; font-weight: bold; width: 120px; letter-spacing: -0.5px; display: block;}
+        
+        .bp-col .tour-date { color: var(--bp-pink); }
+        .dl-col .tour-date { color: #d8bfd8; }
+        .tour-city { color: #eee; font-weight: bold; font-size: 1rem; margin-bottom: 2px; text-transform: uppercase;}
+        .tour-venue { color: #777; font-size: 0.75rem; font-style: italic; letter-spacing: 0.5px; }
+        .show-added-badge { background: #fff; color: #000; font-size: 0.6rem; padding: 1px 4px; margin-left: 5px; font-weight: bold; vertical-align: middle; }
+
+        footer { background: #000; text-align: center; padding: 20px; color: #666; margin-top: auto; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 1400px) {
+            .members-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 1100px) {
+            .tours-container { grid-template-columns: 1fr; height: auto; }
+            .tour-column { height: 500px; margin-bottom: 20px; }
+        }
+        @media (max-width: 700px) {
+            .members-grid { grid-template-columns: 1fr; }
+            .main-title { font-size: 3rem; }
+            .glitch-container { width: 100%; height: 250px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- VIDEO BACKGROUND -->
+    <div id="bg-video-container">
+        <video autoplay muted loop playsinline id="bg-video">
+            <source src="bg.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div id="video-overlay-layer"></div>
+    </div>
+
+    <!-- INTRO OVERLAY -->
+    <div id="intro-overlay">
+        <div class="scanline"></div>
+        <div class="glitch-container">
+            <div class="glitch-img"></div>
+            <div class="glitch-img"></div>
+            <div class="glitch-img"></div>
+        </div>
+        <div class="loader-text">SYSTEM LOADING...</div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        <div class="terminal-logs" id="terminal-logs">
+            Initializing connection...
+        </div>
+    </div>
+
+    <nav>
+        <div class="nav-links">
+            <button class="nav-btn active" onclick="switchTab('home')">Home</button>
+            <button class="nav-btn" onclick="switchTab('history')">History</button>
+            <button class="nav-btn" onclick="switchTab('members')">Members</button>
+            <button class="nav-btn" onclick="switchTab('tours')">Tours</button>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        
+        <!-- HOME PAGE -->
+        <div id="home-page" class="page active-page">
+            <div class="hero-section">
+                <div class="main-title">BLACK<span>PINK</span></div>
+                
+                <div class="home-socials">
+                    <a href="https://www.youtube.com/@BLACKPINK" target="_blank" class="home-social-btn" title="Official YouTube"><i class="fab fa-youtube"></i></a>
+                    <a href="https://www.instagram.com/blackpinkofficial/" target="_blank" class="home-social-btn" title="Official Instagram"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+
+            <!-- GROUP AWARDS -->
+            <div class="awards-section">
+                <div class="section-header">GROUP ACHIEVEMENTS</div>
+                <table class="awards-table">
+                    <thead><tr><th>Year</th><th>Award Show</th><th>Category</th><th>Work</th></tr></thead>
+                    <tbody>
+                        <tr><td class="award-year">2016</td><td>Melon Music Awards</td><td>Best New Artist</td><td class="award-work">BLACKPINK</td></tr>
+                        <tr><td class="award-year">2016</td><td>MAMA</td><td>Best Music Video</td><td class="award-work">Whistle</td></tr>
+                        <tr><td class="award-year">2017</td><td>Golden Disc Awards</td><td>New Artist of the Year</td><td class="award-work">BLACKPINK</td></tr>
+                        <tr><td class="award-year">2017</td><td>Gaon Chart Awards</td><td>Artist of Year (Aug)</td><td class="award-work">Whistle</td></tr>
+                        <tr><td class="award-year">2018</td><td>Melon Music Awards</td><td>Best Dance (Female)</td><td class="award-work">Ddu-Du Ddu-Du</td></tr>
+                        <tr><td class="award-year">2019</td><td>People's Choice</td><td>Group / MV / Tour</td><td class="award-work">Triple Crown</td></tr>
+                        <tr><td class="award-year">2020</td><td>MTV VMAs</td><td>Song of Summer</td><td class="award-work">How You Like That</td></tr>
+                        <tr><td class="award-year">2020</td><td>MAMA</td><td>Best Female Group</td><td class="award-work">BLACKPINK</td></tr>
+                        <tr><td class="award-year">2022</td><td>MTV EMAs</td><td>Best Metaverse</td><td class="award-work">The Virtual</td></tr>
+                        <tr><td class="award-year">2022</td><td>MAMA</td><td>Best Music Video</td><td class="award-work">Pink Venom</td></tr>
+                        <tr><td class="award-year">2023</td><td>Billboard Music Awards</td><td>Top K-Pop Touring Artist</td><td class="award-work">Born Pink Tour</td></tr>
+                        <tr><td class="award-year">2023</td><td>MTV VMAs</td><td>Group of the Year</td><td class="award-work">BLACKPINK</td></tr>
+                        <tr><td class="award-year">2025</td><td>MTV VMAs</td><td>Best Group</td><td class="award-work">BLACKPINK</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- FILMOGRAPHY & REALITY SHOWS (NEW) -->
+            <div class="awards-section" style="margin-top: 20px;">
+                <div class="section-header">FILMOGRAPHY & REALITY</div>
+                <table class="awards-table">
+                    <thead><tr><th>Year</th><th>Title</th><th>Type</th></tr></thead>
+                    <tbody>
+                        <tr><td class="award-year">2018</td><td class="award-name">Blackpink House</td><td class="award-cat">Reality Show</td></tr>
+                        <tr><td class="award-year">2020</td><td class="award-name">24/365 with BLACKPINK</td><td class="award-cat">Reality Show</td></tr>
+                        <tr><td class="award-year">2020</td><td class="award-name">BLACKPINK: Light Up the Sky</td><td class="award-cat">Netflix Documentary</td></tr>
+                        <tr><td class="award-year">2021</td><td class="award-name">BLACKPINK: The Movie</td><td class="award-cat">5th Anniversary Movie</td></tr>
+                        <tr><td class="award-year">2022</td><td class="award-name">BORN PINK MEMORIES: B.P.M.</td><td class="award-cat">Reality Show</td></tr>
+                        <tr><td class="award-year">2024</td><td class="award-name">BLACKPINK WORLD TOUR [BORN PINK] IN CINEMAS</td><td class="award-cat">Concert Film</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="era-container">
+                <div class="era-box iya-style" onclick="switchTab('tours')">
+                    <h3>IN YOUR AREA</h3>
+                    <p>2018-2020</p>
+                </div>
+                <div class="era-box born-pink-style" onclick="switchTab('tours')">
+                    <h3>BORN PINK</h3>
+                    <p>2022-2023</p>
+                </div>
+                <div class="era-box deadline-style" onclick="switchTab('tours')">
+                    <h3>DEAD LINE</h3>
+                    <p>2025-2026</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- HISTORY PAGE -->
+        <div id="history-page" class="page">
+            <h2 style="text-align: center; color: var(--bp-pink); margin-bottom: 20px;">COMPLETE DISCOGRAPHY</h2>
+            <div class="history-table-container">
+                <table class="history-table">
+                    <thead><tr><th>Released</th><th>Song Title</th></tr></thead>
+                    <tbody>
+                        <!-- Data from previous versions retained -->
+                        <tr><td class="date-col">2016.08.08</td><td class="song-title-col">BOOMBAYAH <span class="song-note">Square One</span></td></tr>
+                        <tr><td class="date-col">2016.08.08</td><td class="song-title-col">WHISTLE <span class="song-note">Square One</span></td></tr>
+                        <tr><td class="date-col">2016.11.01</td><td class="song-title-col">PLAYING WITH FIRE <span class="song-note">Square Two</span></td></tr>
+                        <tr><td class="date-col">2016.11.01</td><td class="song-title-col">STAY <span class="song-note">Square Two</span></td></tr>
+                        <tr><td class="date-col">2016.11.01</td><td class="song-title-col">WHISTLE (Acoustic Ver.)</td></tr>
+                        <tr><td class="date-col">2017.06.22</td><td class="song-title-col">As If It's Your Last <span class="song-note">Non-album single</span></td></tr>
+                        <tr><td class="date-col">2017.12.25</td><td class="song-title-col">So Hot (THEBLACKLABEL Remix) <span class="song-note">Wonder Girls Cover</span></td></tr>
+                        <tr><td class="date-col">2018.06.15</td><td class="song-title-col">DDU-DU DDU-DU <span class="song-note">Square Up</span></td></tr>
+                        <tr><td class="date-col">2018.06.15</td><td class="song-title-col">Forever Young <span class="song-note">Square Up</span></td></tr>
+                        <tr><td class="date-col">2018.06.15</td><td class="song-title-col">Really <span class="song-note">Square Up</span></td></tr>
+                        <tr><td class="date-col">2018.06.15</td><td class="song-title-col">See U Later <span class="song-note">Square Up</span></td></tr>
+                        <tr><td class="date-col">2018.10.19</td><td class="song-title-col">Kiss and Make Up <span class="song-note">Promotional / with Dua Lipa</span></td></tr>
+                        <tr><td class="date-col">2019.04.05</td><td class="song-title-col">Kill This Love <span class="song-note">Kill This Love</span></td></tr>
+                        <tr><td class="date-col">2019.04.05</td><td class="song-title-col">Don't Know What To Do <span class="song-note">Kill This Love</span></td></tr>
+                        <tr><td class="date-col">2019.04.05</td><td class="song-title-col">Kick It <span class="song-note">Kill This Love</span></td></tr>
+                        <tr><td class="date-col">2019.04.05</td><td class="song-title-col">Hope Not <span class="song-note">Kill This Love</span></td></tr>
+                        <tr><td class="date-col">2020.05.28</td><td class="song-title-col">Sour Candy <span class="song-note">Promotional / with Lady Gaga</span></td></tr>
+                        <tr><td class="date-col">2020.06.26</td><td class="song-title-col">How You Like That <span class="song-note">The Album</span></td></tr>
+                        <tr><td class="date-col">2020.08.28</td><td class="song-title-col">Ice Cream <span class="song-note">The Album / with Selena Gomez</span></td></tr>
+                        <tr><td class="date-col">2020.10.02</td><td class="song-title-col">Lovesick Girls <span class="song-note">The Album</span></td></tr>
+                        <tr><td class="date-col">2020.10.02</td><td class="song-title-col">Pretty Savage <span class="song-note">The Album</span></td></tr>
+                        <tr><td class="date-col">2020.10.02</td><td class="song-title-col">Bet You Wanna <span class="song-note">The Album / feat. Cardi B</span></td></tr>
+                        <tr><td class="date-col">2020.10.02</td><td class="song-title-col">Crazy Over You <span class="song-note">The Album</span></td></tr>
+                        <tr><td class="date-col">2020.10.02</td><td class="song-title-col">Love To Hate Me <span class="song-note">The Album</span></td></tr>
+                        <tr><td class="date-col">2020.10.02</td><td class="song-title-col">You Never Know <span class="song-note">The Album</span></td></tr>
+                        <tr><td class="date-col">2022.07.29</td><td class="song-title-col">Ready For Love <span class="song-note">Born Pink</span></td></tr>
+                        <tr><td class="date-col">2022.08.19</td><td class="song-title-col">Pink Venom <span class="song-note">Born Pink</span></td></tr>
+                        <tr><td class="date-col">2022.09.16</td><td class="song-title-col">Shut Down <span class="song-note">Born Pink</span></td></tr>
+                        <tr><td class="date-col">2022.09.16</td><td class="song-title-col">Typa Girl <span class="song-note">Born Pink</span></td></tr>
+                        <tr><td class="date-col">2022.09.16</td><td class="song-title-col">Yeah Yeah Yeah <span class="song-note">Born Pink</span></td></tr>
+                        <tr><td class="date-col">2022.09.16</td><td class="song-title-col">Hard to Love <span class="song-note">Born Pink / Rosé Solo</span></td></tr>
+                        <tr><td class="date-col">2022.09.16</td><td class="song-title-col">The Happiest Girl <span class="song-note">Born Pink</span></td></tr>
+                        <tr><td class="date-col">2022.09.16</td><td class="song-title-col">Tally <span class="song-note">Born Pink</span></td></tr>
+                        <tr><td class="date-col">2023.08.25</td><td class="song-title-col">The Girls <span class="song-note">The Game OST</span></td></tr>
+                        <tr><td class="date-col">2025.07.11</td><td class="song-title-col">Jump <span class="song-note">Non-album single</span></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- MEMBERS PAGE -->
+        <div id="members-page" class="page">
+            <h2 style="text-align: center; margin-bottom: 20px; color: var(--bp-pink);">THE MEMBERS</h2>
+            <div class="members-grid">
+                
+                <!-- JISOO -->
+                <div class="member-card">
+                    <img src="jisoo.jpg" class="member-img" alt="Jisoo Jump Concept">
+                    <div class="member-info">
+                        <div class="member-stage-name">JISOO</div>
+                        <div class="info-row"><span class="info-label">本名</span><span class="info-value">Kim Ji-soo<br>金智秀</span></div>
+                        <div class="info-row"><span class="info-label">出生</span><span class="info-value">1995.01.03</span></div>
+                        <div class="info-row"><span class="info-label">國籍</span><span class="info-value">韓國 🇰🇷</span></div>
+                        
+                        <div class="member-socials">
+                            <a href="https://www.youtube.com/@sooyaaa__" target="_blank" class="mem-social-btn"><i class="fab fa-youtube"></i></a>
+                            <a href="https://www.instagram.com/sooyaaa__/" target="_blank" class="mem-social-btn"><i class="fab fa-instagram"></i></a>
+                        </div>
+
+                        <!-- Awards -->
+                        <div class="mem-awards-container">
+                            <div class="mem-awards-header">AWARDS</div>
+                            <div class="mem-award-item"><span class="mem-award-year">2022</span><span>Seoul Drama Awards (Actress)</span></div>
+                            <div class="mem-award-item"><span class="mem-award-year">2023</span><span>MAMA (Best Female/Dance/MV)</span></div>
+                            <div class="mem-award-item"><span class="mem-award-year">2024</span><span>Golden Disc (Bonsang)</span></div>
+                            <div class="mem-award-item"><span class="mem-award-year">2025</span><span>Seoul Drama (Asian Star)</span></div>
+                        </div>
+
+                        <div class="solo-container">
+                            <div class="solo-header">SOLO SONGS</div>
+                            <div class="solo-list">
+                                <div class="solo-item">
+                                    <div class="solo-meta"><span class="solo-date">2023.03.31</span><span class="solo-song">FLOWER</span></div>
+                                    <div class="solo-note">Me Album / Title track</div>
+                                </div>
+                                <div class="solo-item">
+                                    <div class="solo-meta"><span class="solo-date">2023.03.31</span><span class="solo-song">All Eyes On Me</span></div>
+                                    <div class="solo-note">Me Album / B-side track</div>
+                                </div>
+                                <div class="solo-item">
+                                    <div class="solo-meta"><span class="solo-date">2025.02.14</span><span class="solo-song">Earthquake</span></div>
+                                    <div class="solo-note">Amortage EP / Title track</div>
+                                </div>
+                                <div class="solo-item">
+                                    <div class="solo-meta"><span class="solo-date">2025.02.14</span><span class="solo-song">Your Love</span></div>
+                                    <div class="solo-note">Amortage EP</div>
+                                </div>
+                                <div class="solo-item">
+                                    <div class="solo-meta"><span class="solo-date">2025.02.14</span><span class="solo-song">TEARS</span></div>
+                                    <div class="solo-note">Amortage EP</div>
+                                </div>
+                                <div class="solo-item">
+                                    <div class="solo-meta"><span class="solo-date">2025.02.14</span><span class="solo-song">Hugs & Kisses</span></div>
+                                    <div class="solo-note">Amortage EP</div>
+                                </div>
+                            </div>
+                            <div class="solo-header">COLLABORATIONS</div>
+                            <div class="solo-list">
+                                <div class="solo-item">
+                                    <div class="solo-meta"><span class="solo-date">2025.10.10</span><span class="solo-song">Eyes Closed</span></div>
+                                    <div class="collab-note">with Zayn</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- JENNIE -->
+                <div class="member-card">
+                    <img src="jennie.jpg" class="member-img" alt="Jennie Jump Concept">
+                    <div class="member-info">
+                        <div class="member-stage-name">JENNIE</div>
+                        <div class="info-row"><span class="info-label">本名</span><span class="info-value">Kim Jennie<br>金珍妮</span></div>
+                        <div class="info-row"><span class="info-label">出生</span><span class="info-value">1996.01.16</span></div>
+                        <div class="info-row"><span class="info-label">國籍</span><span class="info-value">韓國 🇰🇷</span></div>
+
+                        <div class="member-socials">
+                            <a href="https://www.youtube.com/@ennierubyjane" target="_blank" class="mem-social-btn"><i class="fab fa-youtube"></i></a>
+                            <a href="https://www.instagram.com/jennierubyjane/" target="_blank" class="mem-social-btn"><i class="fab fa-instagram"></i></a>
+                        </div>
+
+                        <!-- Awards -->
+                        <div class="mem-awards-container">
+                            <div class="mem-awards-header">AWARDS</div>
+                            <div class="mem-award-item"><span class="mem-award-year">2019</span><span>Golden Disc (Bonsang)</span></div>
+                            <div class="mem-award-item"><span class="mem-award-year">2024</span><span>Billboard Women (The Icon)</span></div>
+                            <div class="mem-award-item"><span class="mem-award-year">2024</span><span>MAMA (Best Female Artist)</span></div>
+                            <div class="mem-award-item"><span class="mem-award-year">2024</span><span>APMA (Best MV/Song)</span></div>
+                        </div>
+
+                        <div class="solo-container">
+                            <div class="solo-header">SOLO SONGS</div>
+                            <div class="solo-list">
+                                <div class="solo-item">
+                                    <div class="solo-meta"><span class="solo-date">2018.11.12</span><span class="solo-song">SOLO</span></div>
+                                    <div class="solo-note">Title track</div>
+                                </div>
+                                <div class="solo-item">
+                                    <div class="solo-meta"><span class="solo-date">2023.10.06</span><span class="solo-song">You & Me</span></div>
+                                    <div class="solo-note">Non-album single</div>
+                                </div>
+                                <div class="solo-item">
+                                    <div class="solo-meta"><span class="solo-date">2024.10.11</span><span class="solo-song">Mantra</span></div>
+                                    <div class="solo-note">Ruby Album</div>
+                                </div>
+                                <div class="solo-item">
+                                    <div class="solo-meta"><span class="solo-date">2025.03.07</span><span class="solo-song">Like Jennie</span></div>
+                                    <div class="solo-note">Ruby Album</div>
+                                </div>
+                                <div class="solo-item">
+                                    <div class="solo-meta"><span class="solo-date">2025.03.07</span><span class="solo-song">Seoul City</span></div>
+                                    <div class="solo-note">Ruby Album</div>
+                                </div>
+                            </div>
+                            <div class="solo-header">COLLABORATIONS</div>
+                            <div class="solo-list">
+                                <div class="solo-item">
+                                    <div class="solo-meta"><span class="solo-date">2023.06.23</span><span class="solo-song">One of the Girls</span></div>
+                                    <div class="collab-note">with The Weeknd, Lily-Rose Depp</div>
+                                </div>
+                                <div class="solo-item">
+                                    <div class="solo-meta"><span class="solo-date">2024.03.08</span><span class="solo-song">Slow Motion</span></div>
+                                    <div class="collab-note">with Matt Champion</div>
+                                </div>
+                                <div class="solo-item">
+                                    <div class="solo-meta"><span class="solo-date">2024.04.26</span><span class="solo-song">Spot!</span></div>
+                                    <div class="collab-note">feat. JENNIE by ZICO</div>
+                                </div>
+                                <div class="solo-item">
+                                    <div class="solo-meta"><span class="solo-date">2025.03.07</span><span class="solo-song">Love Hangover</span></div>
+                                    <div class="collab-note">The Idol OST / with Dominic Fike</div>
+                                </div>
+                                <div class="solo-item">
+                                    <div class="solo-meta"><span class="solo-date">2025.03.07</span><span class="solo-song">ExtraL</span></div>
+                                    <div class="collab-note">Ruby Album / with Doechii</div>
+                                </div>
+                                <div class="solo-item">
+                                    <div class="solo-meta"><span class="solo-date">2025.03.07</span><span class="solo-song">Handlebars</span></div>
+                                    <div class="collab-note">Ruby Album / with Dua Lipa</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ROSÉ -->
+                <div class="member-card">
+                    <img src="rose.jpg" class="member-img" alt="Rosé Jump Concept">
+                    <div class="member-info">
+                        <div class="member-stage-name">ROSÉ</div>
+                        <div class="info-row"><span class="info-label">本名</span><span class="info-value">Roseanne Park<br>朴彩英</span></div>
+                        <div class="info-row"><span class="info-label">出生</span><span class="info-value">1997.02.11</span></div>
+                        <div class="info-row"><span class="info-label">國籍</span><span class="info-value">紐西蘭/韓國</span></div>
+
+                        <div class="member-socials">
+                            <a href="https://www.youtube.com/@ROSÉ" target="_blank" class="mem-social-btn"><i class="fab fa-youtube"></i></a>
+                            <a href="https://www.instagram.com/roses_are_rosie/" target="_blank" class="mem-social-btn"><i class="fab fa-instagram"></i></a>
+                        </div>
+
+                        <!-- Awards -->
+                        <div class="mem-awards-container">
+                            <div class="mem-awards-header">AWARDS</div>
+                            <div class="mem-award-item"><span class="mem-award-year">2021</span><span>MAMA (Best Dance Solo)</span></div>
+                            <div class="mem-award-item"><span class="mem-award-year">2022</span><span>Golden Disc (Bonsang)</span></div>
+                            <div class="mem-award-item"><span class="mem-award-year">2024</span><span>APMA (Best Collaboration)</span></div>
+                        </div>
+
+                        <div class="solo-container">
+                            <div class="solo-header">SOLO SONGS</div>
+                            <div class="solo-list">
+                                <div class="solo-item">
+                                    <div class="solo-meta"><span class="solo-date">2021.03.12</span><span class="solo-song">On The Ground</span></div>
+                                    <div class="solo-note">Title track</div>
+                                </div>
+                                <div class="solo-item">
+                                    <div class="solo-meta"><span class="solo-date">2021.03.12</span><span class="solo-song">Gone</span></div>
+                                    <div class="solo-note">B-side track</div>
+                                </div>
+                                
+                                <div class="solo-item">
+                                    <div class="solo-meta"><span class="solo-date">2024.11.22</span><span class="solo-song">number one girl</span></div>
+                                    <div class="solo-note">rosie Album</div>
+                                </div>
+                                <div class="solo-item">
+                                    <div class="solo-meta"><span class="solo-date">2024.12.06</span><span class="solo-song">toxic till the end</span></div>
+                                    <div class="solo-note">rosie Album</div>
+                                </div>
+                                <div class="solo-item">
+                                    <div class="solo-meta"><span class="solo-date">2024.12.06</span><span class="solo-song">not the same</span></div>
+                                    <div class="solo-note">rosie Album</div>
+                                </div>
+                                <div class="solo-item">
+                                    <div class="solo-meta"><span class="solo-date">2024.12.06</span><span class="solo-song">dance all night</span></div>
+                                    <div class="solo-note">rosie Album</div>
+                                </div>
+                                <div class="solo-item">
+                                    <div class="solo-meta"><span class="solo-date">2024.12.06</span><span class="solo-song">too bad for us</span></div>
+                                    <div class="solo-note">rosie Album</div>
+                                </div>
+                                <div class="solo-item">
+                                    <div class="solo-meta"><span class="solo-date">2024.12.06</span><span class="solo-song">3am</span></div>
+                                    <div class="solo-note">rosie Album</div>
+                                </div>
+                                <div class="solo-item">
+                                    <div class="solo-meta"><span class="solo-date">2024.12.06</span><span class="solo-song">two years</span></div>
+                                    <div class="solo-note">rosie Album</div>
+                                </div>
+                                <div class="solo-item">
+                                    <div class="solo-meta"><span class="solo-date">2024.12.06</span><span class="solo-song">drinks or coffee</span></div>
+                                    <div class="solo-note">rosie Album</div>
+                                </div>
+                                <div class="solo-item">
+                                    <div class="solo-meta"><span class="solo-date">2024.12.06</span><span class="solo-song">gameboy</span></div>
+                                    <div class="solo-note">rosie Album</div>
+                                </div>
+                                <div class="solo-item">
+                                    <div class="solo-meta"><span class="solo-date">2024.12.06</span><span class="solo-song">stay a little longer</span></div>
+                                    <div class="solo-note">rosie Album</div>
+                                </div>
+                                <div class="solo-item">
+                                    <div class="solo-meta"><span class="solo-date">2024.12.06</span><span class="solo-song">vampirehollie</span></div>
+                                    <div class="solo-note">rosie Album (Bonus)</div>
+                                </div>
+                                <div class="solo-item">
+                                    <div class="solo-meta"><span class="solo-date">2025.03.28</span><span class="solo-song">Messy</span></div>
+                                    <div class="solo-note">F1 OST / Non-album single</div>
+                                </div>
+                            </div>
+                            <div class="solo-header">COLLABORATIONS</div>
+                            <div class="solo-list">
+                                <div class="solo-item">
+                                    <div class="solo-meta"><span class="solo-date">2023.06.28</span><span class="solo-song">Until I Found You</span></div>
+                                    <div class="collab-note">with Stephen Sanchez</div>
+                                </div>
+                                <div class="solo-item">
+                                    <div class="solo-meta"><span class="solo-date">2024.10.18</span><span class="solo-song">APT.</span></div>
+                                    <div class="collab-note">with Bruno Mars</div>
+                                </div>
+                                <div class="solo-item">
+                                    <div class="solo-meta"><span class="solo-date">2025.06.27</span><span class="solo-song">On My Mind</span></div>
+                                    <div class="collab-note">with Alex Warren</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LISA -->
+                <div class="member-card">
+                    <img src="lisa.jpg" class="member-img" alt="Lisa Cowboy Concept">
+                    <div class="member-info">
+                        <div class="member-stage-name">LISA</div>
+                        <div class="info-row"><span class="info-label">本名</span><span class="info-value">Lalisa Manobal</span></div>
+                        <div class="info-row"><span class="info-label">出生</span><span class="info-value">1997.03.27</span></div>
+                        <div class="info-row"><span class="info-label">國籍</span><span class="info-value">泰國 🇹🇭</span></div>
+
+                        <div class="member-socials">
+                            <a href="https://www.youtube.com/@lalalalisa_m" target="_blank" class="mem-social-btn"><i class="fab fa-youtube"></i></a>
+                            <a href="https://www.instagram.com/lalalalisa_m/" target="_blank" class="mem-social-btn"><i class="fab fa-instagram"></i></a>
+                        </div>
+
+                        <!-- Awards -->
+                        <div class="mem-awards-container">
+                            <div class="mem-awards-header">AWARDS</div>
+                            <div class="mem-award-item"><span class="mem-award-year">2022</span><span>VMAs & EMAs (Best K-Pop)</span></div>
+                            <div class="mem-award-item"><span class="mem-award-year">2024</span><span>VMAs (Best K-Pop)</span></div>
+                            <div class="mem-award-item"><span class="mem-award-year">2025</span><span>VMAs (Best K-Pop)</span></div>
+                        </div>
+
+                        <div class="solo-container">
+                            <div class="solo-header">SOLO SONGS</div>
+                            <div class="solo-list">
+                                <div class="solo-item">
+                                    <div class="solo-meta"><span class="solo-date">2021.09.10</span><span class="solo-song">LALISA</span></div>
+                                    <div class="solo-note">Title track</div>
+                                </div>
+                                <div class="solo-item">
+                                    <div class="solo-meta"><span class="solo-date">2021.09.10</span><span class="solo-song">MONEY</span></div>
+                                    <div class="solo-note">B-side track</div>
+                                </div>
+                                <div class="solo-item">
+                                    <div class="solo-meta"><span class="solo-date">2025.06.27</span><span class="solo-song">Rockstar</span></div>
+                                    <div class="solo-note">Lead single</div>
+                                </div>
+                                <div class="solo-item">
+                                    <div class="solo-meta"><span class="solo-date">2025.10.31</span><span class="solo-song">Moonlit Floor</span></div>
+                                    <div class="solo-note">Alter Ego Album</div>
+                                </div>
+                                <div class="solo-item">
+                                    <div class="solo-meta"><span class="solo-date">2025.10.31</span><span class="solo-song">Fxck Up the World</span></div>
+                                    <div class="solo-note">Alter Ego Album</div>
+                                </div>
+                                <div class="solo-item">
+                                    <div class="solo-meta"><span class="solo-date">2025.10.31</span><span class="solo-song">Dream</span></div>
+                                    <div class="solo-note">Alter Ego Album</div>
+                                </div>
+                            </div>
+                            <div class="solo-header">COLLABORATIONS</div>
+                            <div class="solo-list">
+                                <div class="solo-item">
+                                    <div class="solo-meta"><span class="solo-date">2021.10.22</span><span class="solo-song">SG</span></div>
+                                    <div class="collab-note">with DJ Snake, Ozuna, Megan</div>
+                                </div>
+                                <div class="solo-item">
+                                    <div class="solo-meta"><span class="solo-date">2023.04.25</span><span class="solo-song">Shoong!</span></div>
+                                    <div class="collab-note">feat. LISA by TAEYANG</div>
+                                </div>
+                                <div class="solo-item">
+                                    <div class="solo-meta"><span class="solo-date">2025.08.16</span><span class="solo-song">New Woman</span></div>
+                                    <div class="collab-note">Alter Ego / feat. Rosalía</div>
+                                </div>
+                                <div class="solo-item">
+                                    <div class="solo-meta"><span class="solo-date">2025.10.31</span><span class="solo-song">Born Again</span></div>
+                                    <div class="collab-note">Alter Ego / with Doja Cat, Raye</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TOURS PAGE (3 Columns) -->
+        <div id="tours-page" class="page">
+            <div class="tours-container">
+                
+                <!-- 1. IN YOUR AREA (2018-2020) -->
+                <div class="tour-column iya-col">
+                    <div class="tour-header">
+                        <h2>IN YOUR AREA</h2>
+                        <p>2018 - 2020</p>
+                    </div>
+                    <div class="tour-scroll-area">
+                        <table class="tour-table">
+                            <thead><tr><th>Date</th><th>City / Venue</th></tr></thead>
+                            <tbody>
+                                <tr><td class="tour-date">2018.11.10-11</td><td><div class="tour-city">Seoul</div><div class="tour-venue">Olympic Gymnastics Arena</div></td></tr>
+                                <tr><td class="tour-date">2019.01.11-13</td><td><div class="tour-city">Bangkok</div><div class="tour-venue">Impact Arena</div></td></tr>
+                                <tr><td class="tour-date">2019.01.19-20</td><td><div class="tour-city">Jakarta</div><div class="tour-venue">ICE BSD</div></td></tr>
+                                <tr><td class="tour-date">2019.01.26</td><td><div class="tour-city">Hong Kong</div><div class="tour-venue">AsiaWorld-Arena</div></td></tr>
+                                <tr><td class="tour-date">2019.02.02</td><td><div class="tour-city">Manila (Pasay)</div><div class="tour-venue">SM Mall of Asia Arena</div></td></tr>
+                                <tr><td class="tour-date">2019.02.15</td><td><div class="tour-city">Singapore</div><div class="tour-venue">Indoor Stadium</div></td></tr>
+                                <tr><td class="tour-date">2019.02.23-24</td><td><div class="tour-city">Kuala Lumpur</div><div class="tour-venue">Malawati Stadium</div></td></tr>
+                                <tr><td class="tour-date">2019.03.03</td><td><div class="tour-city">Taipei (Taoyuan)</div><div class="tour-venue">NTSU Arena</div></td></tr>
+                                <tr><td class="tour-date">2019.04.17</td><td><div class="tour-city">Los Angeles</div><div class="tour-venue">The Forum</div></td></tr>
+                                <tr><td class="tour-date">2019.04.24</td><td><div class="tour-city">Chicago</div><div class="tour-venue">Allstate Arena</div></td></tr>
+                                <tr><td class="tour-date">2019.04.27</td><td><div class="tour-city">Hamilton</div><div class="tour-venue">FirstOntario Centre</div></td></tr>
+                                <tr><td class="tour-date">2019.05.01-02</td><td><div class="tour-city">Newark</div><div class="tour-venue">Prudential Center</div></td></tr>
+                                <tr><td class="tour-date">2019.05.05</td><td><div class="tour-city">Atlanta</div><div class="tour-venue">Infinite Energy Arena</div></td></tr>
+                                <tr><td class="tour-date">2019.05.08</td><td><div class="tour-city">Fort Worth</div><div class="tour-venue">Convention Center</div></td></tr>
+                                <tr><td class="tour-date">2019.05.18</td><td><div class="tour-city">Amsterdam</div><div class="tour-venue">AFAS Live</div></td></tr>
+                                <tr><td class="tour-date">2019.05.21</td><td><div class="tour-city">Manchester</div><div class="tour-venue">Manchester Arena</div></td></tr>
+                                <tr><td class="tour-date">2019.05.22</td><td><div class="tour-city">London</div><div class="tour-venue">SSE Arena, Wembley</div></td></tr>
+                                <tr><td class="tour-date">2019.05.24</td><td><div class="tour-city">Berlin</div><div class="tour-venue">Max-Schmeling-Halle</div></td></tr>
+                                <tr><td class="tour-date">2019.05.26</td><td><div class="tour-city">Paris</div><div class="tour-venue">Zénith Paris</div></td></tr>
+                                <tr><td class="tour-date">2019.05.28</td><td><div class="tour-city">Barcelona</div><div class="tour-venue">Palau Sant Jordi</div></td></tr>
+                                <tr><td class="tour-date">2019.06.08</td><td><div class="tour-city">Macau</div><div class="tour-venue">Cotai Arena</div></td></tr>
+                                <tr><td class="tour-date">2019.06.13</td><td><div class="tour-city">Melbourne</div><div class="tour-venue">Rod Laver Arena</div></td></tr>
+                                <tr><td class="tour-date">2019.06.15</td><td><div class="tour-city">Sydney</div><div class="tour-venue">Qudos Bank Arena</div></td></tr>
+                                <tr><td class="tour-date">2019.07.12-14</td><td><div class="tour-city">Bangkok (Encore)</div><div class="tour-venue">Impact Arena</div></td></tr>
+                                <tr><td class="tour-date">2019.12.04</td><td><div class="tour-city">Tokyo</div><div class="tour-venue">Tokyo Dome</div></td></tr>
+                                <tr><td class="tour-date">2020.01.04-05</td><td><div class="tour-city">Osaka</div><div class="tour-venue">Kyocera Dome</div></td></tr>
+                                <tr><td class="tour-date">2020.02.22</td><td><div class="tour-city">Fukuoka</div><div class="tour-venue">PayPay Dome</div></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 2. BORN PINK (2022-2023) -->
+                <div class="tour-column bp-col">
+                    <div class="tour-header">
+                        <h2>BORN PINK</h2>
+                        <p>2022 - 2023</p>
+                    </div>
+                    <div class="tour-scroll-area">
+                        <table class="tour-table">
+                            <thead><tr><th>Date</th><th>City / Venue</th></tr></thead>
+                            <tbody>
+                                <tr><td class="tour-date">2022.10.15-16</td><td><div class="tour-city">Seoul</div><div class="tour-venue">KSPO Dome</div></td></tr>
+                                <tr><td class="tour-date">2022.10.25</td><td><div class="tour-city">Dallas</div><div class="tour-venue">American Airlines Center</div></td></tr>
+                                <tr><td class="tour-date">2022.10.29</td><td><div class="tour-city">Houston</div><div class="tour-venue">Toyota Center</div></td></tr>
+                                <tr><td class="tour-date">2022.11.02</td><td><div class="tour-city">Atlanta</div><div class="tour-venue">State Farm Arena</div></td></tr>
+                                <tr><td class="tour-date">2022.11.06</td><td><div class="tour-city">Hamilton</div><div class="tour-venue">FirstOntario Centre</div></td></tr>
+                                <tr><td class="tour-date">2022.11.10</td><td><div class="tour-city">Chicago</div><div class="tour-venue">United Center</div></td></tr>
+                                <tr><td class="tour-date">2022.11.14</td><td><div class="tour-city">Newark</div><div class="tour-venue">Prudential Center</div></td></tr>
+                                <tr><td class="tour-date">2022.11.19</td><td><div class="tour-city">Los Angeles</div><div class="tour-venue">BMO Stadium</div></td></tr>
+                                <tr><td class="tour-date">2022.11.30</td><td><div class="tour-city">London</div><div class="tour-venue">The O2 Arena</div></td></tr>
+                                <tr><td class="tour-date">2022.12.05</td><td><div class="tour-city">Barcelona</div><div class="tour-venue">Palau Sant Jordi</div></td></tr>
+                                <tr><td class="tour-date">2022.12.08</td><td><div class="tour-city">Cologne</div><div class="tour-venue">Lanxess Arena</div></td></tr>
+                                <tr><td class="tour-date">2022.12.11-12</td><td><div class="tour-city">Paris</div><div class="tour-venue">Accor Arena</div></td></tr>
+                                <tr><td class="tour-date">2022.12.15</td><td><div class="tour-city">Copenhagen</div><div class="tour-venue">Royal Arena</div></td></tr>
+                                <tr><td class="tour-date">2022.12.19</td><td><div class="tour-city">Berlin</div><div class="tour-venue">Uber Arena</div></td></tr>
+                                <tr><td class="tour-date">2022.12.22</td><td><div class="tour-city">Amsterdam</div><div class="tour-venue">Ziggo Dome</div></td></tr>
+                                <tr><td class="tour-date">2023.01.07-08</td><td><div class="tour-city">Bangkok</div><div class="tour-venue">National Stadium</div></td></tr>
+                                <tr><td class="tour-date">2023.01.13-15</td><td><div class="tour-city">Hong Kong</div><div class="tour-venue">AsiaWorld-Arena</div></td></tr>
+                                <tr><td class="tour-date">2023.01.20</td><td><div class="tour-city">Riyadh</div><div class="tour-venue">Boulevard City</div></td></tr>
+                                <tr><td class="tour-date">2023.01.28</td><td><div class="tour-city">Abu Dhabi</div><div class="tour-venue">Etihad Park</div></td></tr>
+                                <tr><td class="tour-date">2023.03.04</td><td><div class="tour-city">Kuala Lumpur</div><div class="tour-venue">National Stadium</div></td></tr>
+                                <tr><td class="tour-date">2023.03.11-12</td><td><div class="tour-city">Jakarta</div><div class="tour-venue">GBK Stadium</div></td></tr>
+                                <tr><td class="tour-date">2023.03.18</td><td><div class="tour-city">Kaohsiung</div><div class="tour-venue">National Stadium</div></td></tr>
+                                <tr><td class="tour-date">2023.03.25-26</td><td><div class="tour-city">Manila</div><div class="tour-venue">Philippine Arena</div></td></tr>
+                                <tr><td class="tour-date">2023.04.08-09</td><td><div class="tour-city">Tokyo</div><div class="tour-venue">Tokyo Dome</div></td></tr>
+                                <tr><td class="tour-date">2023.04.26</td><td><div class="tour-city">Mexico City</div><div class="tour-venue">Foro Sol</div></td></tr>
+                                <tr><td class="tour-date">2023.05.13</td><td><div class="tour-city">Singapore</div><div class="tour-venue">National Stadium</div></td></tr>
+                                <tr><td class="tour-date">2023.05.20-21</td><td><div class="tour-city">Macau</div><div class="tour-venue">Galaxy Macau</div></td></tr>
+                                <tr><td class="tour-date">2023.05.27-28</td><td><div class="tour-city">Bangkok (Encore)</div><div class="tour-venue">Rajamangala Stadium</div></td></tr>
+                                <tr><td class="tour-date">2023.06.03-04</td><td><div class="tour-city">Osaka</div><div class="tour-venue">Kyocera Dome</div></td></tr>
+                                <tr><td class="tour-date">2023.06.10-11</td><td><div class="tour-city">Melbourne</div><div class="tour-venue">Rod Laver Arena</div></td></tr>
+                                <tr><td class="tour-date">2023.06.16-17</td><td><div class="tour-city">Sydney</div><div class="tour-venue">Qudos Bank Arena</div></td></tr>
+                                <tr><td class="tour-date">2023.07.15</td><td><div class="tour-city">Paris (Encore)</div><div class="tour-venue">Stade De France</div></td></tr>
+                                <tr><td class="tour-date">2023.07.29-30</td><td><div class="tour-city">Hanoi</div><div class="tour-venue">My Dinh Stadium</div></td></tr>
+                                <tr><td class="tour-date">2023.08.11-12</td><td><div class="tour-city">New Jersey</div><div class="tour-venue">MetLife Stadium</div></td></tr>
+                                <tr><td class="tour-date">2023.08.18</td><td><div class="tour-city">Las Vegas</div><div class="tour-venue">Allegiant Stadium</div></td></tr>
+                                <tr><td class="tour-date">2023.08.22</td><td><div class="tour-city">San Francisco</div><div class="tour-venue">Oracle Park</div></td></tr>
+                                <tr><td class="tour-date">2023.08.26</td><td><div class="tour-city">Los Angeles</div><div class="tour-venue">Dodger Stadium</div></td></tr>
+                                <tr><td class="tour-date">2023.09.16-17</td><td><div class="tour-city">Seoul (Finale)</div><div class="tour-venue">Gocheok Sky Dome</div></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 3. DEAD LINE (2025-2026) -->
+                <div class="tour-column dl-col">
+                    <div class="tour-header">
+                        <h2>DEAD LINE</h2>
+                        <p>2025 - 2026</p>
+                    </div>
+                    <div class="tour-scroll-area">
+                        <table class="tour-table">
+                            <thead><tr><th>Date</th><th>City / Venue</th></tr></thead>
+                            <tbody>
+                                <tr><td class="tour-date">2025.07.05-06</td><td><div class="tour-city">Goyang</div><div class="tour-venue">Goyang Stadium</div></td></tr>
+                                <tr><td class="tour-date">2025.07.12-13</td><td><div class="tour-city">Los Angeles</div><div class="tour-venue">SoFi Stadium</div></td></tr>
+                                <tr><td class="tour-date">2025.07.18</td><td><div class="tour-city">Chicago</div><div class="tour-venue">Soldier Field</div></td></tr>
+                                <tr><td class="tour-date">2025.07.22-23</td><td><div class="tour-city">Toronto</div><div class="tour-venue">Rogers Stadium</div></td></tr>
+                                <tr><td class="tour-date">2025.07.26-27</td><td><div class="tour-city">New York</div><div class="tour-venue">Citi Field</div></td></tr>
+                                <tr><td class="tour-date">2025.08.02-03</td><td><div class="tour-city">Paris</div><div class="tour-venue">Stade De France</div></td></tr>
+                                <tr><td class="tour-date">2025.08.06</td><td><div class="tour-city">Milan</div><div class="tour-venue">Ippodromo Snai La Maura</div></td></tr>
+                                <tr><td class="tour-date">2025.08.09</td><td><div class="tour-city">Barcelona</div><div class="tour-venue">Estadi Olimpic</div></td></tr>
+                                <tr><td class="tour-date">2025.08.15-16</td><td><div class="tour-city">London</div><div class="tour-venue">Wembley Stadium</div></td></tr>
+                                <tr><td class="tour-date">2025.10.18-19</td><td><div class="tour-city">Kaohsiung</div><div class="tour-venue">Kaohsiung National Stadium</div></td></tr>
+                                <tr><td class="tour-date">2025.10.24-26</td><td><div class="tour-city">Bangkok</div><div class="tour-venue">Rajamangala National Stadium</div></td></tr>
+                                <tr><td class="tour-date">2025.11.01-02</td><td><div class="tour-city">Jakarta</div><div class="tour-venue">Gelora Bung Karno Main Stadium</div></td></tr>
+                                <tr><td class="tour-date">2025.11.22-23</td><td><div class="tour-city">Bulacan</div><div class="tour-venue">Philippine Arena</div></td></tr>
+                                <tr><td class="tour-date">2025.11.28-30</td><td><div class="tour-city">Singapore <span class="show-added-badge">SHOW ADDED</span></div><div class="tour-venue">National Stadium</div></td></tr>
+                                <tr><td class="tour-date">2026.01.16-18</td><td><div class="tour-city">Tokyo</div><div class="tour-venue">Tokyo Dome</div></td></tr>
+                                <tr><td class="tour-date">2026.01.24-26</td><td><div class="tour-city">Hong Kong <span class="show-added-badge">SHOW ADDED</span></div><div class="tour-venue">Kai Tak Stadium</div></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        &copy; 2025 BLACKPINK Fan Page.
+    </footer>
+
+    <script>
+        function switchTab(tabName) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active-page');
+                page.style.display = 'none';
+            });
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            
+            const target = document.getElementById(tabName + '-page');
+            if(target) {
+                target.style.display = tabName === 'home' ? 'flex' : 'block';
+                setTimeout(() => target.classList.add('active-page'), 10);
+            }
+            
+            const idx = {'home':0, 'history':1, 'members':2, 'tours':3}[tabName];
+            document.querySelectorAll('.nav-btn')[idx].classList.add('active');
+            window.scrollTo(0, 0);
+        }
+        
+        // Start Loading Animation
+        document.addEventListener("DOMContentLoaded", () => {
+            const progressBar = document.getElementById('progress-fill');
+            const logs = document.getElementById('terminal-logs');
+            const body = document.body;
+            
+            let width = 0;
+            const logMessages = [
+                "Loading Blackpink Database...",
+                "Verifying Member Profiles...",
+                "Syncing Tour Dates...",
+                "Establishing Secure Connection...",
+                "System Ready."
+            ];
+
+            const interval = setInterval(() => {
+                if (width >= 100) {
+                    clearInterval(interval);
+                    body.classList.add('loaded'); // Trigger fade out
+                    switchTab('home'); // Ensure home is active
+                } else {
+                    width += 2; // Speed of loading
+                    progressBar.style.width = width + '%';
+                    
+                    if(width % 20 === 0) {
+                        logs.innerText = logMessages[width / 20 - 1] || "Processing...";
+                    }
+                }
+            }, 30); // 30ms * 50 steps = 1.5 seconds approx
+        });
+    </script>
+</body>
+</html>
