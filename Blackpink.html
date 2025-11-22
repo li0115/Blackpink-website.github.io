@@ -310,14 +310,28 @@
             .tour-column { height: 500px; margin-bottom: 20px; }
         }
         /* --- MOBILE TABLE FIX (貼在 <style> 的最後面) --- */
-@media (max-width: 768px) {
-    /* 1. 讓卡片容器可以左右滑動，而不是撐爆版面 */
-    .awards-section {
-        overflow-x: auto;       /* 允許水平捲動 */
-        padding: 15px;          /* 縮小卡片內距，騰出空間 */
+        @media (max-width: 768px) {
+            /* 1. 讓卡片容器可以左右滑動，而不是撐爆版面 */
+            .awards-section {
+                overflow-x: auto;       /* 允許水平捲動 */
+                padding: 15px;          /* 縮小卡片內距，騰出空間 */
+                width: 100%;
+                box-sizing: border-box;
+            }
+        @media (max-width: 700px) {
+            .main-title {
+                /* 改用 vw (螢幕寬度的百分比) */
+                /* 這樣不管手機多窄，文字都會剛好塞滿一行，不會凸出去 */
+                font-size: 13vw; 
+                letter-spacing: 2px; /* 手機版字距稍微縮小一點 */
+            }
+    
+    /* 既然標題變小了，原本的故障特效容器高度也要配合縮小，不然會有太多留白 */
+    .glitch-container {
         width: 100%;
-        box-sizing: border-box;
+        height: 200px;
     }
+}
 
     /* 2. 縮小表格文字與間距，讓它盡量塞進去 */
     .awards-table th, 
@@ -335,9 +349,16 @@
 
     /* 4. 修正主標題在手機過大的問題 */
     .main-title {
-        font-size: 3.5rem;
-        word-break: break-word; /* 避免太長單字切到 */
-    }
+    font-size: 6rem;
+    letter-spacing: 5px;
+    font-weight: 900;
+    text-shadow: 0 0 30px rgba(0,0,0,0.8);
+    line-height: 1.1;
+    margin-bottom: 20px;
+    
+    /* 新增這一行：強制文字不換行 */
+    white-space: nowrap; 
+}
 }
     </style>
 </head>
